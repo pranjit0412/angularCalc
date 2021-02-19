@@ -1,0 +1,8 @@
+<div class="flexcont">
+    <app-display [value]="operand"></app-display>
+    <app-upperrow (uprrowbuttonClick)="onOperatorButtonClick($event)" class="updis"></app-upperrow>
+</div>
+<div class="flexcontainer">
+    <app-numpad (numpadButtonClickEvent)="onNumpadButtonClick($event)" (lastRowClick)="onOperatorButtonClick($event)"></app-numpad>
+    <app-operator-pad (operatorButtonClickEvent)=" onOperatorButtonClick($event)"></app-operator-pad>
+</div>

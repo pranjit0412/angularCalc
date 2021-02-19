@@ -1,0 +1,4 @@
+<app-cal-btn *ngFor="let item of items" (numpadEvents)="numberButtonEventTrigger(item)" [padNumber]="item"></app-cal-btn>
+<app-opr-btn (newEvent)="operatorButton('.')" class="opreq" oprVar="."></app-opr-btn>
+<app-cal-btn (numpadEvents)="numberButtonEventTrigger('0')" class="opreqq" padNumber="0"></app-cal-btn>
+<app-opr-btn color="blue" (newEvent)="operatorButton('=')" class="opreq" oprVar="="></app-opr-btn>

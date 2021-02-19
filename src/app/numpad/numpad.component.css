@@ -1,0 +1,10 @@
+:host {
+    width: 75%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.opreq {
+    width: 33.33%;
+}

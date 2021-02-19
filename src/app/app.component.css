@@ -1,0 +1,26 @@
+:host {
+    margin-left: 10px;
+    display: flex;
+    width: 40%;
+    flex-direction: column;
+}
+
+.flexcontainer {
+    display: flex;
+    flex-direction: row;
+    height: 50%;
+}
+
+.flexcont {
+    display: flex;
+    flex-direction: column;
+    height: 50%;
+}
+
+.disp {
+    height: 100%;
+}
+
+.updis {
+    height: 50%
+}

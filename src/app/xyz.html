@@ -1,0 +1,280 @@
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12 p-md-0">
+            <div class="card c-p" (click)="goBack()">
+                <div class="card-body p-3">
+                    <button class="btn btn-icon">
+            <i class="fas fa-angle-left fa-2x"></i>
+            <span>{{ "allIneedToDo" | translate }}</span>
+          </button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h5>Review Checkin</h5>
+                </div>
+                <ul class="nav flex-column" *ngIf="users">
+                    <ng-container *ngFor="let employee of users">
+                        <li class="nav-item" (click)="getcheckInCommentsHolder(employee)">
+                            <a aria-controls="home" aria-selected="false" class="nav-link" data-toggle="tab" href="#home" id="home-tab" role="tab" [ngClass]="
+                  employee.employeeId == activeEmployeeId ? 'active' : ''
+                ">
+                                <div class="media">
+                                    <div class="media-left profile-pic">
+                                        <img class="media-object" *ngIf="employee.imageUrl" src="{{ employee.imageUrl }}" />
+                                        <img class="media-object" *ngIf="!employee.imageUrl" src="assets/images/profilePic.png" />
+                                    </div>
+                                    <div class="media-body text-truncate">
+                                        <b class="text-truncate" data-toggle="tooltip" placement="bottom" ngbTooltip="{{ employee.displayName }}">{{ employee.displayName }}</b>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    </ng-container>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-8 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center text-wrap">
+                    <div>
+                        <h5>{{ activeOwner.programName }}</h5>
+                        <small>{{ activeOwner?.frequency | translate }},
+              {{ activeOwner?.startDate | date: "d" }}
+              {{ activeOwner?.startDate | date: "MMM" | translate }} -
+              {{ activeOwner?.endDate | date: "d" }}
+              {{ activeOwner?.endDate | date: "MMM" | translate }}</small>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <span class="b" *ngIf="locationName && locationName != ''">Location:</span>
+                        <p> {{locationName}}</p>
+                    </div>
+
+                </div>
+
+                <div class="alert alert-warning" *ngIf="userComment != null">
+                    <p>Comments: {{ userComment }}</p>
+                </div>
+
+                <div class="card-body pt-0" *ngIf="!showEdit">
+                    <ng-container *ngIf="checkInComments?.checkInDetailsData">
+                        <ng-container *ngFor="let item of checkInComments?.checkInDetailsData;index as i">
+
+                            <div class="card border">
+                                <div class="card-header border-bottom bg-light">
+                                    <b>{{i+1}}. {{ item.title}}<small class="badge bg-warning ml-2"
+                      *ngIf="checkInResponse[i]?.edited">Edited</small>
+
+                    <span class="text-danger" *ngIf="customFormData[item.formId]?.isMandatory">*</span>
+                  </b>
+
+                                </div>
+
+                                <div *ngIf="customFormData[item.formId]?.fieldType == 'checkbox'; else elseBlock" class="card-body">
+                                    <ul *ngFor="let multiselectData of customFormData[item.formId]?.menu">
+                                        <li>{{multiselectData.name}}</li>
+                                    </ul>
+                                </div>
+                                <ng-template #elseBlock>
+                                    <div class="card-body">
+                                        <p [innerHTML]="item.supValue"></p>
+                                    </div>
+                                </ng-template>
+
+
+
+                                <div *ngIf="customFormData[item.formId].fieldType == 'checkbox'; else elseBlock" class="card-body">
+                                    <ul *ngFor="let multiselectData of customFormData[item.formId]?.menu">
+                                        <li>{{multiselectData.name}}</li>
+                                    </ul>
+                                </div>
+                                <ng-template #elseBlock>
+                                    <div class="card-body">
+                                        <p [innerHTML]="item.supValue"></p>
+                                    </div>
+                                </ng-template>
+
+                                <div class="p-2" *ngIf="customFormData[item.formId]?.menu.length > 0">
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <b class="text-light mr-3">Other options</b>
+                                        <i class="fas fa-eye c-p" (click)="isCollapsed[i] = !isCollapsed[i]" [attr.aria-expanded]="!isCollapsed[i]"></i>
+                                    </div>
+                                    <ul [ngbCollapse]="!isCollapsed[i]">
+                                        <span *ngFor="let options of customFormData[item.formId]?.menu">
+                      <li *ngIf="options.name != item.supValue &&  (item.supValue.indexOf(options.name) < 0)">
+                        {{options.name}}
+                      </li>
+                    </span>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </ng-container>
+                    </ng-container>
+
+                    <div class="row">
+                        <div class=" col-lg-4 col-md-4 col-sm-12 col-xs-12 pr-1">
+
+                            <div class="card border mt-2" *ngFor="let sI of submitedImages">
+                                <div class="p-2 d-flex align-items-center">
+                                    <i class="fas fa-images mr-2"></i>
+                                    <p class="text-truncate">{{sI.attachment.docName}}</p>
+                                    <i class="fas fa-eye ml-auto" (click)="viewDocument(sI)"></i>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 px-1">
+
+                            <div class="card border mt-2" *ngFor="let iA of submitedDocs">
+                                <div class="p-2 d-flex align-items-center">
+                                    <i class="fas fa-file mr-2"></i>
+                                    <p class="text-truncate">{{iA.attachment.docName}}</p>
+                                    <i class="fas fa-eye ml-auto" (click)="viewDocument(iA)"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 pl-1">
+                <div class="card border">
+                  <div class="upload-btn-wrapper w-auto">
+                    <button class="upload-btn btn-sm">
+                      <i class="fas fa-phone mr-2"></i> Add contact </button>
+                    <input accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt" id="files" type="file"
+                      (change)="contactChooserChange($event)">
+                  </div>
+                </div>
+                <div class="card border mt-2" *ngFor="let iA of contactAttachments">
+                  <div class="p-2 d-flex align-items-center">
+                    <i class="fas fa-phone mr-2"></i>
+                    <p class="text-truncate">{{iA.docName}}</p>
+                    <i class="fas fa-times ml-auto"></i>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+                    </div>
+
+                    <div class="card border" *ngIf="starRating != null">
+                        <div class="card-header border-bottom bg-light">
+                            <b>{{ "progRating" | translate }}</b>
+                        </div>
+                        <div class="card-body">
+                            <ng-template #t let-fill="fill">
+                                <span class="star" [class.full]="fill === 100">
+                  <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                                </span>
+                            </ng-template>
+                            <ngb-rating [(rate)]="starRating" [starTemplate]="t" [readonly]="true" max="5"></ngb-rating>
+
+                        </div>
+                    </div>
+
+
+                    <!-- <div class="form-group">
+                                <p class="small">Attachments</p>
+                                <div class="upload-btn btn-sm justify-content-between mt-2">
+                                    <div class="text-truncate"><i class="fas fa-file-upload mr-2"></i><b
+                                            class="text-truncate">report_jn25-jn30.pdf</b></div>
+                                    <div><i class="fas fa-eye ml-2"></i><i class="fas fa-download ml-2"></i></div>
+                                </div>
+                                <div class="upload-btn btn-sm justify-content-between mt-2">
+                                    <div class="text-truncate"><i class="fas fa-file-upload mr-2"></i><b class="text-truncate">checkin_details</b>
+                                    </div>
+                                    <div><i class="fas fa-eye ml-2"></i><i class="fas fa-download ml-2"></i></div>
+                                </div>
+                            </div> -->
+                </div>
+
+                <div class="card-footer" *ngIf="!showEdit">
+
+                    <div class="card border p-2">
+                        <p class="b">
+                            {{ "provideFeedbackCheckIn" | translate }}
+                            <span class="text-danger" *ngIf="checkInComments?.supervisorCommentMandatory">*</span>
+                            <small *ngIf="!checkInComments?.supervisorCommentMandatory"> {{ "optional" | translate }}</small>
+                        </p>
+                        <div class="media align-items-start">
+                            <div class="media-left profile-pic">
+                                <img *ngIf="iconSrc" src="{{ iconSrc }}" class="media-object profile-pic rounded-circle" />
+                                <img *ngIf="!iconSrc" class="media-object profile-pic rounded-circle" src="assets/images/profilePic.png" style="width:44px;" />
+                            </div>
+                            <div class="media-body">
+                                <textarea autosize="" class="comment grey" placeholder="{{ 'writeYourComments' | translate }}" rows="2" [(ngModel)]="publishComments" maxlength="2000"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="card-body" *ngIf="showEdit">
+                    <ng-container *ngFor="let item of customFormData; index as i">
+                        <div class="form-group" *ngIf="item?.menu.length == 0">
+                            <div class="ui-float-label">
+                                <textarea autosize rows="1" class="form-control" id="progress" name="programName" placeholder=" " [(ngModel)]="checkInResponse[i].supValue" (focusout)="checkInDetailList(item, checkInResponse[i])" [maxlength]="
+                    activeOwner.charLimit ? activeOwner.charLimit : 4000"></textarea>
+
+                                <label for="progress">{{ item.title | translate }}</label>
+                                <small *ngIf="activeOwner?.charLimit != null">Max. {{ activeOwner.charLimit }}</small>
+                                <small *ngIf="activeOwner?.charLimit == null">Max. 4000</small>
+                            </div>
+                        </div>
+                        <div class="form-group" *ngIf="item?.menu.length > 0">
+                            <div class="ui-float-label">
+                                <select class="form-select" [(ngModel)]="checkInResponse[i].supValue" (change)="setDropdownValue(item, checkInResponse[i])">
+                  <ng-container *ngFor="let option of item?.menu">
+                    <option value="{{ option.name }}">{{ option.name }}</option>
+                  </ng-container>
+                </select>
+                                <label>{{ item.title }}</label>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <div class="form-group" *ngIf="starRating != null">
+                        <b>{{ "progRating" | translate }}</b>
+                        <p>
+                            <ng-template #t let-fill="fill">
+                                <span class="star" [class.full]="fill === 100">
+                  <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                                </span>
+                            </ng-template>
+                            <ngb-rating [(rate)]="starRating" [starTemplate]="t" max="5"></ngb-rating>
+                        </p>
+                    </div>
+                </div>
+                <div class="card-footer sticky" *ngIf="!showEdit">
+                    <div class="btn-group btn-position">
+                        <button [disabled]="disableBttn" class="btn btn-secondary" (click)="publishCheckInReview('sendBack')">
+              Send Back
+            </button>
+                        <button [disabled]="disableBttn" class="btn btn-primary" (click)="publishCheckInReview('publish')">
+              Publish
+            </button>
+                    </div>
+                </div>
+                <div class="card-footer sticky" *ngIf="showEdit">
+                    <div class="btn-group btn-position">
+                        <button class="btn btn-secondary" (click)="closeEdit()">
+              Cancel
+            </button>
+                        <button class="btn btn-primary" (click)="submitCheckIn(activeOwner)" [disabled]="buttonStatus">
+              Save
+            </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xs-12 p-md-0">
+            <!-- <div class="card">
+        <div class="card-body p-3">
+          <button class="btn btn-icon btn-block justify-content-between">
+            {{ "help" | translate }}
+            <i class="fas fa-angle-right fa-2x"></i>
+          </button>
+        </div>
+      </div> -->
+        </div>
+    </div>
+</div>
